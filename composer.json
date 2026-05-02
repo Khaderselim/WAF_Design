@@ -1,0 +1,10 @@
+{
+    "require": {
+        "codewithkyrian/transformers": "^0.6.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "codewithkyrian/platform-package-installer": true
+        }
+    }
+}

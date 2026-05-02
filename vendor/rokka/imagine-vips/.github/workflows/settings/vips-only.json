@@ -1,0 +1,5 @@
+{
+    "extensions": ":ffi",
+    "ini_values": "",
+    "aptinstall": "libvips-dev"
+}

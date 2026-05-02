@@ -1,0 +1,50 @@
+{
+  "name": "codewithkyrian/jinja-php",
+  "description": "A minimalistic PHP implementation of the Jinja templating engine, specifically designed for parsing and rendering ML chat templates.",
+  "type": "library",
+  "require": {
+    "php": "^8.1"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^6.3|^7.0",
+    "pestphp/pest": "^2.36.0|^3.5.0",
+    "friendsofphp/php-cs-fixer": "^3.89",
+    "phpstan/phpstan": "^2.1"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Codewithkyrian\\Jinja\\": "src/"
+    },
+    "files": [
+      "src/Core/Utils.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "Kyrian Obikwelu",
+      "email": "koshnawaza@gmail.com"
+    }
+  ],
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "test:coverage": "XDEBUG_MODE=coverage ./vendor/bin/pest --coverage",
+    "cs-fix": "vendor/bin/php-cs-fixer fix",
+    "cs-check": "vendor/bin/php-cs-fixer fix --dry-run --diff --verbose",
+    "phpstan": "vendor/bin/phpstan analyze",
+    "phpstan-baseline": "vendor/bin/phpstan analyze --generate-baseline",
+    "qa": [
+      "@cs-check",
+      "@phpstan"
+    ],
+    "qa-fix": [
+      "@cs-fix",
+      "@phpstan"
+    ]
+  }
+}

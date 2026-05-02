@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Codewithkyrian\Jinja\Runtime;
+
+/**
+ * @extends RuntimeValue<null>
+ */
+class NullValue extends RuntimeValue
+{
+    public string $type = 'NullValue';
+
+    public function __construct()
+    {
+        parent::__construct(null);
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return 'null';
+    }
+}
