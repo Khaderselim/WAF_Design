@@ -182,6 +182,8 @@ WAF_Design/
 │   ├── alert_actions.php   # Handle security alert actions
 │   └── block_actions.php   # Handle IP blocking/unblocking
 ├── Class/                  # PHP Classes
+|   ├──models
+         ├──hf_model_fixed  # Transformers model 
 │   ├── Alerts.php         # Alert management
 │   ├── Block.php          # IP blocking management
 │   ├── Dashboard.php      # Dashboard statistics
