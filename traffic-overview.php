@@ -1,13 +1,22 @@
 <?php
 session_start();
 
+// Database connection
+require_once "db_connection.php";
+
 // Initialize WAF - detects and blocks attacks
 require_once "waf_init.php";
 include "Class/Traffic.php";
+require_once "export_csv.php";
 
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
+}
+
+// Handle CSV export request
+if (isset($_POST['export_csv'])) {
+    exportTrafficLogCSV($conn, "traffic_log", "Traffic_Log_Export_");
 }
 
 $traffic = new Traffic();
@@ -176,11 +185,16 @@ $role = $_SESSION['role_id'] ;
 
         <div class="container">
             <div class="page-inner">
-                <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+                <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4 justify-content-between">
                     <div>
                         <h3 class="fw-bold mb-3">Traffic Overview</h3>
                         <p class="text-muted">Real-time traffic analysis and statistics</p>
                     </div>
+                    <form method="POST" style="display: inline; align-self: center;">
+                        <button type="submit" name="export_csv" value="1" class="btn btn-primary btn-sm">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                    </form>
                 </div>
 
                 <div class="row">
@@ -281,8 +295,9 @@ $role = $_SESSION['role_id'] ;
 
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <div class="card-title">Top Requested URLs</div>
+
                             </div>
                             <div class="card-body">
                                 <table class="table table-striped">
