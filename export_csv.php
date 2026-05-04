@@ -1,6 +1,4 @@
 <?php
-// Don't call session_start() - it's already started in the calling page
-// require_once "db_connection.php";
 
 /**
  * Export traffic log data to CSV file

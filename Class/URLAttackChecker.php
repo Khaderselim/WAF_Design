@@ -90,6 +90,27 @@ try {
  }
 
  /**
+  * Check if a rule is active in the database
+  *
+  * @param string $label The rule label/type (e.g., 'is_sqli', 'is_xss', 'is_cmdi')
+  * @return bool True if the rule is active, false otherwise
+  */
+ private function isRuleActive(string $label): bool
+ {
+  try {
+$stmt = $this->pdo->prepare("
+ SELECT is_active FROM rule
+ WHERE type = ? AND is_active = 1
+ LIMIT 1
+");
+$stmt->execute([$label]);
+return (bool) $stmt->fetch();
+  } catch (Exception $e) {
+return false;
+  }
+ }
+
+ /**
   * Classify URL/input for attacks using ML model
   *
   * @param string $input The URL or string to classify
@@ -109,6 +130,11 @@ $attackTypes = [];
 
 foreach ($results as $r) {
  if (!isset($r['label'], $r['score'])) {
+  continue;
+ }
+
+ // Check if the rule is active before processing
+ if (!$this->isRuleActive($r['label'])) {
   continue;
  }
 
