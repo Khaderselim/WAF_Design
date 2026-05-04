@@ -64,6 +64,7 @@ $email    = $_SESSION['email'] ?? '';
                     <li class="nav-item"><a href="traffic-overview.php"><i class="fas fa-chart-line"></i><p>Traffic Overview</p></a></li>
                     <li class="nav-item"><a href="security-alerts.php"><i class="fas fa-exclamation-triangle"></i><p>Security Alerts</p></a></li>
                     <li class="nav-item"><a href="blocked-attacks.php"><i class="fas fa-shield-alt"></i><p>Blocked Attacks</p></a></li>
+                    <li class="nav-item"><a href="upload-files.php"><i class="fas fa-cloud-upload-alt"></i><p>Upload Files</p></a></li>
                     <li class="nav-item active"><a href="settings.php"><i class="fas fa-cog"></i><p>Settings</p></a></li>
                 </ul>
             </div>

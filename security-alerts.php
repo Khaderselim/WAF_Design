@@ -93,6 +93,12 @@ $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
                             <p>Blocked Attacks</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a  href="upload-files.php">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Upload Files</p>
+                        </a>
+                    </li>
                     <?php if($role == 1){ ?>
                         <li class="nav-item">
                             <a  href="settings.php">
