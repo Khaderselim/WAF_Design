@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload_file'])) {
     if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
 
     $maxFileSize        = 50 * 1024 * 1024;
-    $allowedExtensions  = ['csv', 'xls', 'xlsx'];
+    $allowedExtensions  = ['csv'];
 
     if ($file['size'] > $maxFileSize) {
         $uploadStatus  = 'error';
@@ -36,12 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload_file'])) {
         } else {
             $filePath = $uploadDir . basename($file['name']);
             if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                $stmt = $conn->prepare("INSERT INTO uploaded_file (file_name, file_type, file_size, upload_path, malware_detected) VALUES (?, ?, ?, ?, ?)");
+                $stmt = $conn->prepare("INSERT INTO uploaded_file (file_name, file_type, file_size, upload_path) VALUES (?, ?, ?, ?)");
                 $originalFileName = $file['name'];
                 $fileType         = $file['type'];
                 $fileSize         = $file['size'];
-                $malwareDetected  = 0;
-                $stmt->bind_param('ssisi', $originalFileName, $fileType, $fileSize, $filePath, $malwareDetected);
+                $stmt->bind_param('ssis', $originalFileName, $fileType, $fileSize, $filePath );
                 if ($stmt->execute()) {
                     $uploadStatus  = 'success';
                     $uploadMessage = 'File uploaded successfully.';
@@ -154,7 +153,7 @@ if ($conn) {
             <div class="page-inner">
                 <div class="pt-2 pb-4">
                     <h3 class="fw-bold mb-1">Upload Files</h3>
-                    <p class="text-muted">Upload a CSV or Excel file and analyze it.</p>
+                    <p class="text-muted">Upload a CSV file and analyze it.</p>
                 </div>
 
                 <?php if (!empty($uploadMessage)): ?>
@@ -175,7 +174,7 @@ if ($conn) {
                                     <input type="file" class="form-control" name="upload_file" id="upload_file" required>
                                     <button class="btn btn-primary" type="submit"><i class="fas fa-upload me-1"></i>Upload</button>
                                 </div>
-                                <small class="text-muted">Max 50MB — CSV, XLS, XLSX</small>
+                                <small class="text-muted">Max 50MB — CSV</small>
                             </div>
                         </form>
                     </div>
@@ -192,7 +191,6 @@ if ($conn) {
                                     <th>File Name</th>
                                     <th>Type</th>
                                     <th>Size</th>
-                                    <th>Malware</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -208,13 +206,6 @@ if ($conn) {
                                                 $s = $file['file_size'];
                                                 echo $s >= 1048576 ? round($s/1048576,2).' MB' : ($s >= 1024 ? round($s/1024,2).' KB' : $s.' B');
                                                 ?></td>
-                                            <td>
-                                                <?php if ($file['malware_detected']): ?>
-                                                    <span class="badge bg-danger">Detected</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-success">Clean</span>
-                                                <?php endif; ?>
-                                            </td>
                                             <td>
                                                 <button class="btn btn-sm btn-primary analyze-btn" data-file-path="<?= htmlspecialchars($file['upload_path']) ?>" data-file-name="<?= htmlspecialchars($file['file_name']) ?>">
                                                     <i class="fas fa-search me-1"></i>Analyze
