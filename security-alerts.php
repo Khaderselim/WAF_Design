@@ -269,10 +269,7 @@ $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <h4 class="card-title">Latest Security Alerts</h4>
-
-                            </div>
+                            <h4 class="card-title">Latest Security Alerts</h4>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -303,7 +300,7 @@ $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
                                         </td>
                                         <td><?php echo $row['type'] ?></td>
                                         <td><?php echo $row['source_ip'] ?></td>
-                                        <td><?php echo $row['timestamp'] ?></td>
+                                        <td><?php echo $row['resolved_at']!= null ? $row['resolved_at'] : $row['created_at']  ?></td>
                                         <td>
                                             <span class="badge status-badge badge-<?php 
                                                 echo ($row['status'] === 'resolved') ? 'success' : 
@@ -389,7 +386,6 @@ $(document).ready(function() {
     const allRows = tableBody.find('tr').clone();
     const rowsPerPageSelect = $('#rowsPerPage');
     const paginationContainer = $('#pagination');
-    const noResults = $('#noResults');
     
     let currentPage = 1;
     let rowsPerPage = 25;
@@ -415,12 +411,10 @@ $(document).ready(function() {
         tableBody.empty();
 
         if (totalRows === 0) {
-            noResults.show();
+            tableBody.html('<tr><td colspan="6" class="text-center text-muted py-4">No alerts found.</td></tr>');
             paginationContainer.empty();
             return;
         }
-
-        noResults.hide();
 
         // Display rows for current page
         const startIndex = (currentPage - 1) * rowsPerPage;
@@ -482,13 +476,15 @@ $(document).ready(function() {
         // Resolve button
         tableBody.on('click', '.resolve-btn', function() {
             const alertId = $(this).data('alert-id');
-            updateAlertStatus(alertId, 'resolved', $(this).closest('tr'));
+            const row = $(this).closest('tr');
+            updateAlertStatus(alertId, 'resolved', row);
         });
 
         // Reopen button
         tableBody.on('click', '.reopen-btn', function() {
             const alertId = $(this).data('alert-id');
-            updateAlertStatus(alertId, 'open', $(this).closest('tr'));
+            const row = $(this).closest('tr');
+            updateAlertStatus(alertId, 'open', row);
         });
     }
 
@@ -534,36 +530,12 @@ $(document).ready(function() {
                         `);
                     }
 
-                    // Show success message
-                    showNotification(response.message, 'success');
-
                     // Reinitialize tooltips
                     $('[data-bs-toggle="tooltip"]').tooltip('dispose');
                     $('[data-bs-toggle="tooltip"]').tooltip();
-                } else {
-                    showNotification(response.message, 'error');
                 }
-            },
-            error: function() {
-                showNotification('Failed to update alert status', 'error');
             }
         });
-    }
-
-    // Show notification message
-    function showNotification(message, type) {
-        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-        const alertHtml = `<div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>`;
-        
-        const alertElement = $(alertHtml);
-        $('body').prepend(alertElement);
-        
-        setTimeout(function() {
-            alertElement.alert('close');
-        }, 4000);
     }
 
     // Initial table load

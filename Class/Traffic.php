@@ -20,7 +20,7 @@ class Traffic {
     function getblockedtraffic(){
         return $this->db->query("SELECT * FROM traffic_log where blocked = 1");
     }
-    function Blockrate(){
+    function  Blockrate(){
         return $this->getTraffic()->rowCount()? round($this->getblockedtraffic()->rowCount()/$this->getTraffic()->rowCount(),2)*100 : 0;
     }
 

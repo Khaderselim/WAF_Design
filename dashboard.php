@@ -102,7 +102,7 @@ $trafficTypeStats = $dashboard->getTrafficTypeStats();
                     <li class="nav-item active">
                         <a
                             
-                            href="/dashboard.php"
+                            href="dashboard.php"
                             class="collapsed"
                             aria-expanded="false"
                         >

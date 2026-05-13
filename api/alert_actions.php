@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $alert = new Alerts();
 
     if ($action === 'resolve' && $alert_id > 0) {
+
         $result = $alert->updateAlertStatus($alert_id, 'resolved');
         if ($result) {
             $response = ['success' => true, 'message' => 'Alert resolved successfully'];

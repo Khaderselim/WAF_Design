@@ -3,36 +3,44 @@ class Alerts{
     private $db;
     public function __construct(){
         try{
-            $this->db = new PDO('mysql:host=localhost;dbname=waf_db', 'root', '');
-
+            $this->db = new PDO('mysql:host=localhost;dbname=waf_db', 'root', '', [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]);
         }catch (PDOException $e){
-            echo("Connection failed: " . $e->getMessage());
+            error_log("Connection failed: " . $e->getMessage());
+            throw new Exception("Database connection failed");
         }
     }
-    function getCritical(){
-        return $this->db->query("SELECT * FROM alert where severity = 'critical'");
+
+    public function getCritical(){
+        return $this->db->query("SELECT * FROM alert WHERE severity = 'CRITICAL'");
     }
-    function getHigh(){
-        return $this->db->query("SELECT * FROM alert where severity = 'high'");
+
+    public function getHigh(){
+        return $this->db->query("SELECT * FROM alert WHERE severity = 'HIGH'");
     }
-    function getMedium(){
-        return $this->db->query("SELECT * FROM alert where severity = 'medium'");
+
+    public function getMedium(){
+        return $this->db->query("SELECT * FROM alert WHERE severity = 'MEDIUM'");
     }
-    function getResolved(){
-        return $this->db->query("SELECT * FROM alert where status = 'resolved'");
+
+    public function getResolved(){
+        return $this->db->query("SELECT * FROM alert WHERE status = 'resolved'");
     }
-    function getallalerts(){
-        return $this->db->query("SELECT *  FROM alert A JOIN waf_db.traffic_log tl on tl.id = A.traffic_log_id");
+
+    public function getAllAlerts(){
+        return $this->db->query("SELECT a.*, tl.source_ip FROM alert a JOIN traffic_log tl ON tl.id = a.traffic_log_id ORDER BY a.created_at DESC");
     }
     
-    function updateAlertStatus($alert_id, $status){
+    public function updateAlertStatus($alert_id, $status){
         try {
             $stmt = $this->db->prepare("UPDATE alert SET status = :status WHERE id = :id");
-            $stmt->bindParam(':status', $status);
-            $stmt->bindParam(':id', $alert_id);
+            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $alert_id, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
-            echo("Error: " . $e->getMessage());
+            error_log("Error updating alert: " . $e->getMessage());
             return false;
         }
     }
